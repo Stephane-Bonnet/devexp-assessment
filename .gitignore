@@ -5,3 +5,7 @@
 /.vs/devexp-assessment
 /devexp-assessment/.vs
 /devexp-assessment/obj
+/.vs
+/DevexpAssessment/.vs
+/DevexpAssessment/bin/Debug/net8.0
+/DevexpAssessment/obj
