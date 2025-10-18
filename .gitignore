@@ -9,3 +9,12 @@
 /DevexpAssessment/.vs
 /DevexpAssessment/bin/Debug/net8.0
 /DevexpAssessment/obj
+/DevexpAssessment/bin/Debug
+/DevexpAssessment.IntegrationTests/bin/Debug/net8.0
+/DevexpAssessment.IntegrationTests/obj
+/DevexpAssessment.UnitTests/bin/Debug/net8.0
+/DevexpAssessment.UnitTests/obj
+/DevexpTester/bin/Debug/net8.0
+/DevexpTester/obj
+/MessageValidator/bin/Debug/net8.0
+/MessageValidator/obj
