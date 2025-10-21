@@ -12,10 +12,33 @@ namespace MessageValidator
             var app = builder.Build();
 
             app.UseAuthorization();
-            app.MapPost("/webhooks", (HttpContext httpContext) =>
+            app.MapPost("/webhooks", async (HttpContext httpContext) =>
             {
-                Console.WriteLine("Webhook received!");
-                return Results.Ok();
+                Console.WriteLine("Webhook received");
+
+                var authorizationHeader = httpContext.Request.Headers.Authorization.ToString();
+
+                if (string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Signature "))
+                {
+                    Console.WriteLine("Missing or invalid Authorization header");
+                    return Results.BadRequest();
+                }
+
+                var splitHeader = authorizationHeader.Split(' ');
+                if (splitHeader.Length != 2)
+                {
+                    Console.WriteLine("Invalid Authorization header format");
+                    return Results.BadRequest();
+                }
+
+                var message = await new StreamReader(httpContext.Request.Body).ReadToEndAsync();
+                if (DevexpAssessment.Security.SignatureValidator.Validate(message, splitHeader.Last()))
+                {
+                    Console.WriteLine("Signature validated!");
+                    return Results.Ok();
+                }
+
+                return Results.BadRequest();
             });
 
             app.Run();

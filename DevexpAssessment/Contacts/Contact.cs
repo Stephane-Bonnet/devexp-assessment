@@ -21,7 +21,13 @@ namespace DevexpAssessment.Contacts
     {
         [JsonPropertyName("contacts")]
         public List<Contact> Contacts { get; set; } = [];
+
+        // was going to create a common "PagedResponse" common class, but field names were different between Contacts and Messages
+
+        [JsonPropertyName("pageNumber")]
         public int PageNumber { get; set; }
+
+        [JsonPropertyName("pageSize")]
         public int PageSize { get; set; }
     }
 

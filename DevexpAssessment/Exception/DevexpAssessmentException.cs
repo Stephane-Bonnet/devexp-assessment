@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DevexpAssessment.Exception
 {
-    class DevexpAssessmentException : System.Exception
+    public class DevexpAssessmentException : System.Exception
     {
         public DevexpAssessmentException(string message) : base(message) { }
         public DevexpAssessmentException(System.Exception internalException) : base("An internal error occurred in the DevexpAssessment SDK.", internalException) { }

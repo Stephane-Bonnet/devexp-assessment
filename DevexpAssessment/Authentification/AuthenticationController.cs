@@ -13,10 +13,11 @@ namespace DevexpAssessment.Authentification
             _logger = loggerFactory.CreateLogger<AuthenticationController>();
         }
 
-        public void Authenticate(string secretKey)
+        public ValueTask Authenticate(string secretKey)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", secretKey);
             // Optionally, you could add a method to verify the authentication by making a test request to the server.
+            return ValueTask.CompletedTask;
         }
     }
 }

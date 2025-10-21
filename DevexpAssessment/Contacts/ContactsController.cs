@@ -16,7 +16,7 @@ namespace DevexpAssessment.Contacts
             _logger = loggerFactory.CreateLogger<ContactsController>();
         }
 
-        public async Task<Contact?> CreateAsync(CreateContactRequest newContact)
+        public async Task<Contact?> Create(CreateContactRequest newContact)
         {
             try
             {
@@ -39,17 +39,30 @@ namespace DevexpAssessment.Contacts
             }
         }
 
-        public async Task<GetAllContactsResponse> GetAllAsync()
+        public async Task<GetAllContactsResponse?> GetAll(int pageIndex = 0, int pageSize = 10)
         {
             try
             {
-                var response = await _httpClient.GetAsync(_endpoint);
-                if (!response.IsSuccessStatusCode)
+                var paramsQuery = Tools.QueryBuilder.Build(new Dictionary<string, object?>
                 {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    throw new DevexpAssessmentException($"Error while getting all contacts: {errorMessage} (status code: {response.StatusCode})");
+                    { "pageNumber", pageIndex.ToString() },
+                    { "pageSize", pageSize.ToString() }
+                });
+
+                if (Uri.TryCreate(_httpClient.BaseAddress, _endpoint + paramsQuery, out var uri))
+                {
+                    var response = await _httpClient.GetAsync(uri);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorMessage = await response.Content.ReadAsStringAsync();
+                        throw new DevexpAssessmentException($"Error while getting all contacts: {errorMessage} (status code: {response.StatusCode})");
+                    }
+                    return await response.Content.ReadFromJsonAsync<GetAllContactsResponse>();
                 }
-                return await response.Content.ReadFromJsonAsync<GetAllContactsResponse>();
+                else
+                {
+                    throw new System.Exception("Error while constructing request URI for getting all contacts");
+                }  
             }
             catch (DevexpAssessmentException)
             {
@@ -62,7 +75,7 @@ namespace DevexpAssessment.Contacts
             }
         }
 
-        public async Task<Contact?> GetAsync(string contactId)
+        public async Task<Contact?> Get(string contactId)
         {
             try
             {
@@ -85,7 +98,7 @@ namespace DevexpAssessment.Contacts
             }
         }
 
-        public async Task<Contact?> UpdateAsync(string contactId, UpdateContactRequest updateContact)
+        public async Task<Contact?> Update(string contactId, UpdateContactRequest updateContact)
         {
             try
             {
@@ -108,7 +121,7 @@ namespace DevexpAssessment.Contacts
             }
         }
 
-        public async Task DeleteAsync(string contactId)
+        public async Task Delete(string contactId)
         {
             try
             {

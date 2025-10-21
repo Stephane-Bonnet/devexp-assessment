@@ -34,6 +34,8 @@ namespace DevexpAssessment.Messages
         [JsonPropertyName("data")]
         public Data Data { get; set; }
 
+        // was going to create a common "PagedResponse" class, but field names were different between Contacts and Messages
+
         [JsonPropertyName("page")]
         public int Page { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DevexpAssessment.Exception;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
 namespace DevexpAssessment.Messages
@@ -15,24 +16,86 @@ namespace DevexpAssessment.Messages
             _logger = loggerFactory.CreateLogger<MessagesController>();
         }
 
-        public async Task SendAsync(SendMessageRequest request)
+        public async Task Send(SendMessageRequest request)
         {
-            var response = await _httpClient.PostAsJsonAsync(_endpoint, request);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(_endpoint, request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    throw new DevexpAssessmentException($"Error sending message: {errorMessage} (status code: {response.StatusCode})");
+                }
+            }
+            catch (DevexpAssessmentException)
+            {
+                throw;
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "Error sending message");
+                throw new DevexpAssessmentException(ex);
+            }
         }
 
-        public async Task<GetAllMessagesResponse?> GetAllAsync()
+        public async Task<GetAllMessagesResponse?> GetAll(int pageIndex = 0, int pageSize = 100)
         {
-            var response = await _httpClient.GetAsync(_endpoint);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<GetAllMessagesResponse>();
+            try
+            {
+                var paramsQuery = Tools.QueryBuilder.Build(new Dictionary<string, object?>
+                {
+                    { "page", pageIndex.ToString() },
+                    { "limit", pageSize.ToString() }
+                });
+
+                if (Uri.TryCreate(_httpClient.BaseAddress, _endpoint + paramsQuery, out var uri))
+                {
+                    var response = await _httpClient.GetAsync(uri);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorMessage = await response.Content.ReadAsStringAsync();
+                        throw new DevexpAssessmentException($"Error getting messages: {errorMessage} (status code: {response.StatusCode})");
+                    }
+                    return await response.Content.ReadFromJsonAsync<GetAllMessagesResponse>();
+                }
+                else
+                {
+                    throw new System.Exception("Error while constructing request URI for getting all messages");
+                }
+                    
+            }
+            catch (DevexpAssessmentException)
+            {
+                throw;
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "Error getting messages");
+                throw new DevexpAssessmentException(ex);
+            }
         }
 
-        public async Task<Message?> GetByIdAsync(string messageId)
+        public async Task<Message?> Get(string messageId)
         {
-            var response = await _httpClient.GetAsync($"{_endpoint}/{messageId}");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<Message>();
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_endpoint}/{messageId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    throw new DevexpAssessmentException($"Error getting message: {errorMessage} (status code: {response.StatusCode})");
+                }
+                return await response.Content.ReadFromJsonAsync<Message>();
+            }
+            catch (DevexpAssessmentException)
+            {
+                throw;
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "Error getting message");
+                throw new DevexpAssessmentException(ex);
+            }
         }
     }
 }

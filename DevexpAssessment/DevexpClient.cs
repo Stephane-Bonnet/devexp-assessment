@@ -4,15 +4,22 @@ using DevexpAssessment.Messages;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
 using Polly;
-using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace DevexpAssessment
 {
     public interface IDevexpClient
     {
+        /// <summary>
+        ///     Manages authentication operations
+        /// </summary>
         public AuthenticationController Auth { get; }
+        /// <summary>
+        ///     Create, update, delete and retrieve contacts
+        /// </summary>
         public ContactsController Contacts { get; }
+        /// <summary>
+        ///     Send and retrieve messages
+        /// </summary>
         public MessagesController Messages { get; }
     }
 
@@ -24,16 +31,20 @@ namespace DevexpAssessment
         private readonly ContactsController _contacts;
         private readonly MessagesController _messages;
 
+        /// <inheritdoc />
         public AuthenticationController Auth => _auth;
+        /// <inheritdoc />
         public ContactsController Contacts => _contacts;
+        /// <inheritdoc />
         public MessagesController Messages => _messages;
         
         
-        public DevexpClient(string apiUrl = "http://localhost:3000")
+        public DevexpClient(string apiUrl)
         {
             _httpClient = CreateHttpClient(apiUrl);
             var loggerFactory = LoggerFactory.Create(builder =>
             {
+                // Add sink / provider here
                 builder.SetMinimumLevel(LogLevel.Information);
             });
             _auth = new AuthenticationController(_httpClient, loggerFactory);
@@ -48,6 +59,7 @@ namespace DevexpAssessment
 
         private static ResilienceHandler BuildHttpHandler()
         {
+            // must be careful with retry strategy to avoid duplicating non-idempotent requests
             var retryPipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
                 .AddRetry(new HttpRetryStrategyOptions
                 {
@@ -56,7 +68,7 @@ namespace DevexpAssessment
                     MaxRetryAttempts = 3
                 })
                 .Build();
-
+            // Configure SocketsHttpHandler to recycle connections periodically
             var socketHandler = new SocketsHttpHandler
             {
                 PooledConnectionLifetime = TimeSpan.FromMinutes(15)
