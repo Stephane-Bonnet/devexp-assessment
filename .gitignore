@@ -18,3 +18,9 @@
 /DevexpTester/obj
 /MessageValidator/bin/Debug/net8.0
 /MessageValidator/obj
+/DevexpAssesment.WebhookTester/bin
+/DevexpAssesment.WebhookTester/obj
+/DevexpAssessment/bin/Release
+/DevexpAssessment.IntegrationTests/bin/Release/net8.0
+/DevexpAssessment.UnitTests/bin/Release/net8.0
+/MessageValidator/bin/Release/net8.0
