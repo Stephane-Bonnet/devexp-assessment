@@ -1,0 +1,40 @@
+name: Build, Test & Publish NuGet Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout du code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Installation du SDK .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # 3. Restauration des dépendances
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # 4. Compilation du projet (avec la version du tag)
+      - name: Build with Release version
+        run: dotnet build --configuration Release /p:Version=${{ github.event.release.tag_name }}
+
+      # 5. Exécution des tests unitaires
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      # 6. Création du package NuGet
+      - name: Pack NuGet
+        run: dotnet pack --configuration Release /p:PackageVersion=${{ github.event.release.tag_name }} --output ./nupkg
+
+      # 7. Publication sur NuGet.org
+      - name: Publish to NuGet.org
+        run: dotnet nuget push "./nupkg/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
