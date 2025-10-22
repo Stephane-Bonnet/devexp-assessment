@@ -31,8 +31,9 @@ namespace MessageValidator
                     return Results.BadRequest();
                 }
 
+                var signature = splitHeader.Last();
                 var message = await new StreamReader(httpContext.Request.Body).ReadToEndAsync();
-                if (DevexpAssessment.Security.SignatureValidator.Validate(message, splitHeader.Last()))
+                if (DevexpAssessment.Security.SignatureValidator.Validate(message, signature))
                 {
                     Console.WriteLine("Signature validated!");
                     return Results.Ok();
