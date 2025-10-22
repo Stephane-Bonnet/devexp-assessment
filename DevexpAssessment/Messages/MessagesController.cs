@@ -1,4 +1,4 @@
-﻿using DevexpAssessment.Exception;
+﻿using DevexpAssessment.Exceptions;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
@@ -31,10 +31,10 @@ namespace DevexpAssessment.Messages
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error sending message");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
 
@@ -68,10 +68,10 @@ namespace DevexpAssessment.Messages
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting messages");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
 
@@ -91,10 +91,10 @@ namespace DevexpAssessment.Messages
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting message");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
     }

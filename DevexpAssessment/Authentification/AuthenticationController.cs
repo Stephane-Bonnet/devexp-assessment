@@ -5,7 +5,7 @@ namespace DevexpAssessment.Authentification
     public class AuthenticationController
     {
         private readonly HttpClient _httpClient;
-        private ILogger<AuthenticationController> _logger;
+        private readonly ILogger<AuthenticationController> _logger;
 
         public AuthenticationController(HttpClient httpClient, ILoggerFactory loggerFactory)
         {

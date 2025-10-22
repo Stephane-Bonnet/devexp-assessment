@@ -37,16 +37,21 @@ namespace DevexpAssessment
         public ContactsController Contacts => _contacts;
         /// <inheritdoc />
         public MessagesController Messages => _messages;
+
         
-        
-        public DevexpClient(string apiUrl)
+        public DevexpClient(string apiUrl, ILoggerFactory? loggerFactory = null) // Could add on Options class for handling all SDK options (url, logger, logLevel,etc..)
         {
             _httpClient = CreateHttpClient(apiUrl);
-            var loggerFactory = LoggerFactory.Create(builder =>
+
+            if (loggerFactory == null)
             {
-                // Add sink / provider here
-                builder.SetMinimumLevel(LogLevel.Information);
-            });
+                loggerFactory = LoggerFactory.Create(builder =>
+                {
+                    builder.AddConsole();
+                    builder.SetMinimumLevel(LogLevel.Information);
+                });
+            }
+
             _auth = new AuthenticationController(_httpClient, loggerFactory);
             _contacts = new ContactsController(_httpClient, loggerFactory);
             _messages = new MessagesController(_httpClient, loggerFactory);  

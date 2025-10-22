@@ -4,7 +4,7 @@ using DevexpAssessment.Contacts;
 using Moq;
 using Moq.Protected;
 using Microsoft.Extensions.Logging;
-using DevexpAssessment.Exception;
+using DevexpAssessment.Exceptions;
 
 
 namespace DevexpAssessment.UnitTests

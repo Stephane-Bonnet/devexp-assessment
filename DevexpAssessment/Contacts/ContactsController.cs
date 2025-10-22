@@ -1,4 +1,4 @@
-﻿using DevexpAssessment.Exception;
+﻿using DevexpAssessment.Exceptions;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
@@ -32,10 +32,10 @@ namespace DevexpAssessment.Contacts
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating contact");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
 
@@ -61,17 +61,17 @@ namespace DevexpAssessment.Contacts
                 }
                 else
                 {
-                    throw new System.Exception("Error while constructing request URI for getting all contacts");
+                    throw new DevexpAssessmentUnexpectedException("Error while constructing request URI for getting all contacts");
                 }  
             }
             catch (DevexpAssessmentException)
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting all contacts");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
 
@@ -91,10 +91,10 @@ namespace DevexpAssessment.Contacts
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting contact");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
 
@@ -114,10 +114,10 @@ namespace DevexpAssessment.Contacts
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating contact");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
 
@@ -136,10 +136,10 @@ namespace DevexpAssessment.Contacts
             {
                 throw;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting contact");
-                throw new DevexpAssessmentException(ex);
+                throw new DevexpAssessmentUnexpectedException(ex);
             }
         }
     }
