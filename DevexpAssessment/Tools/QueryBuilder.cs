@@ -8,9 +8,9 @@ using System.Web;
 
 namespace DevexpAssessment.Tools
 {
-    class QueryBuilder
+    internal class QueryBuilder
     {
-        public static string Build(Dictionary<string, object?>? parameters)
+        internal static string Build(Dictionary<string, object?>? parameters)
         {
             if (parameters == null || parameters.Count == 0) return string.Empty;
 
